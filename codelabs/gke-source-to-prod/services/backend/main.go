@@ -1,8 +1,8 @@
 package main
 
 import (
-	"io"
 	"fmt"
+	"io"
 	"net/http"
 	"os"
 )
@@ -10,10 +10,9 @@ import (
 var count = 1
 
 func index(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("Handling %+v\n", r);
+	fmt.Printf("Handling %+v\n", r)
 
 	host, err := os.Hostname()
-
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error retrieving hostname: %v", err), 500)
 		return
@@ -28,6 +27,6 @@ func index(w http.ResponseWriter, r *http.Request) {
 func main() {
 	http.HandleFunc("/", index)
 	port := ":8000"
-	fmt.Printf("Starting to service on port %s\n", port);
+	fmt.Printf("Starting to service on port %s\n", port)
 	http.ListenAndServe(port, nil)
 }

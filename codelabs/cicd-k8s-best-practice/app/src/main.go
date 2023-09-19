@@ -7,8 +7,10 @@ import (
 	"text/template"
 )
 
-var env string = ""
-var config string = ""
+var (
+	env    string = ""
+	config string = ""
+)
 
 func update_config() error {
 	b, err := ioutil.ReadFile("/opt/demo/env/env.yaml")
@@ -46,7 +48,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 
 	config := map[string]string{
 		"Config": config,
-		"Env": env,
+		"Env":    env,
 	}
 
 	t.Execute(w, config)

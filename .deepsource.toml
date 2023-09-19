@@ -1,0 +1,20 @@
+version = 1
+
+[[analyzers]]
+name = "docker"
+
+[[analyzers]]
+name = "terraform"
+
+[[analyzers]]
+name = "go"
+
+  [analyzers.meta]
+  import_root = "github.com/Prabhjot-kaur-a1877033/spinnaker"
+  dependencies_vendored = true
+
+[[transformers]]
+name = "gofmt"
+
+[[transformers]]
+name = "gofumpt"

@@ -18,12 +18,14 @@ import (
 	"google.golang.org/api/monitoring/v3"
 )
 
-var count = 1
-var lastTime = time.Now()
+var (
+	count    = 1
+	lastTime = time.Now()
+)
 
 // Started with: https://github.com/GoogleCloudPlatform/golang-samples/blob/master/monitoring/custommetric/custommetric.go
 func writeTimeSeriesValue(now string, s *monitoring.Service, metricType string, metricValue int64) error {
-        // TODO(duftler): Check these errors.
+	// TODO(duftler): Check these errors.
 	project_id, err := gce.ProjectID()
 	location, err := gce.InstanceAttributeValue("cluster-location")
 	cluster_name, err := gce.InstanceAttributeValue("cluster-name")
@@ -36,11 +38,11 @@ func writeTimeSeriesValue(now string, s *monitoring.Service, metricType string, 
 		},
 		Resource: &monitoring.MonitoredResource{
 			Labels: map[string]string{
-                                "project_id":     project_id,
-                                "location":       location,
-                                "cluster_name":   cluster_name,
-                                "namespace_name": os.Getenv("NAMESPACE_NAME"),
-                                "pod_name":       os.Getenv("POD_NAME"),
+				"project_id":     project_id,
+				"location":       location,
+				"cluster_name":   cluster_name,
+				"namespace_name": os.Getenv("NAMESPACE_NAME"),
+				"pod_name":       os.Getenv("POD_NAME"),
 			},
 			Type: "k8s_pod",
 		},
@@ -51,7 +53,7 @@ func writeTimeSeriesValue(now string, s *monitoring.Service, metricType string, 
 					EndTime:   now,
 				},
 				Value: &monitoring.TypedValue{
-                                      Int64Value: &metricValue,
+					Int64Value: &metricValue,
 				},
 			},
 		},
@@ -62,7 +64,7 @@ func writeTimeSeriesValue(now string, s *monitoring.Service, metricType string, 
 	}
 
 	log.Printf("writeTimeseriesRequest: %s\n", formatResource(createTimeseriesRequest))
-	_, err = s.Projects.TimeSeries.Create("projects/" + project_id, &createTimeseriesRequest).Do()
+	_, err = s.Projects.TimeSeries.Create("projects/"+project_id, &createTimeseriesRequest).Do()
 	if err != nil {
 		return fmt.Errorf("Could not write time series value, %v ", err)
 	}
@@ -80,9 +82,9 @@ func formatResource(resource interface{}) []byte {
 
 func index(w http.ResponseWriter, r *http.Request) {
 	now := time.Now()
-	fmt.Printf("** Elapsed: %v\n", now.Sub(lastTime).Seconds());
+	fmt.Printf("** Elapsed: %v\n", now.Sub(lastTime).Seconds())
 	if now.Sub(lastTime).Seconds() > 60 {
-		fmt.Printf("** Going to record: %v\n", now);
+		fmt.Printf("** Going to record: %v\n", now)
 
 		lastTime = now
 
@@ -103,10 +105,9 @@ func index(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	fmt.Printf("Handling %+v\n", r);
+	fmt.Printf("Handling %+v\n", r)
 
 	host, err := os.Hostname()
-
 	if err != nil {
 		http.Error(w, fmt.Sprintf("Error retrieving hostname: %v", err), 500)
 		return
@@ -133,6 +134,6 @@ func createService(ctx context.Context) (*monitoring.Service, error) {
 func main() {
 	http.HandleFunc("/", index)
 	port := ":8000"
-	fmt.Printf("Starting to service on port %s\n", port);
+	fmt.Printf("Starting to service on port %s\n", port)
 	http.ListenAndServe(port, nil)
 }
